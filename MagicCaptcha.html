@@ -49,21 +49,26 @@
   var timer;
 
   function initialiserCaptcha() {
-    valeurAleatoire = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
-    var chiffres = valeurAleatoire.toString().split('');
-    contexte.clearRect(0, 0, canvas.width, canvas.height);
-    var colonneWidth = canvas.width / 4; // Largeur de chaque colonne
-    var rectHeight = 160;
-    contexte.font = '40px serif';
+  valeurAleatoire = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+  var chiffres = valeurAleatoire.toString().split('');
+  contexte.clearRect(0, 0, canvas.width, canvas.height);
+  var colonneWidth = canvas.width / 4; // Largeur de chaque colonne
+  var rectHeight = 160;
+  contexte.font = '40px serif';
 
-    // Dessiner les chiffres dans chaque colonne
-    for (var i = 0; i < chiffres.length; i++) {
-      var startX = colonneWidth * i + (colonneWidth - 50) / 2 + 10; // Position horizontale du chiffre dans la colonne avec un décalage de 10 pixels
-      var startY = Math.random() * (rectHeight - 40); // Position verticale aléatoire à l'intérieur du rectangle
-      startY = Math.min(startY + 50, rectHeight - 50); // Limiter la position verticale pour rester dans le canvas
-      contexte.fillText(chiffres[i], startX, startY);
-    }
+  // Dessiner les chiffres dans chaque colonne
+  for (var i = 0; i < chiffres.length; i++) {
+    var startX = colonneWidth * i + (colonneWidth - 50) / 2 + 10; // Position horizontale du chiffre dans la colonne avec un décalage de 10 pixels
+    var startY = Math.random() * (rectHeight - 40); // Position verticale aléatoire à l'intérieur du rectangle
+    var offsetX = Math.random() * 20 - 10; // Décalage horizontal aléatoire jusqu'à 10 pixels dans les deux sens
+    var offsetY = Math.random() * 20 - 10; // Décalage vertical aléatoire jusqu'à 10 pixels dans les deux sens
+    startX += offsetX;
+    startY += offsetY;
+    startY = Math.min(startY + 50, rectHeight - 50); // Limiter la position verticale pour rester dans le canvas
+    contexte.fillText(chiffres[i], startX, startY);
   }
+}
+
 
   function reset() {
     initialiserCaptcha();
