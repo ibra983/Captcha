@@ -65,9 +65,17 @@
     startX += offsetX;
     startY += offsetY;
     startY = Math.min(startY + 50, rectHeight - 50); // Limiter la position verticale pour rester dans le canvas
-    contexte.fillText(chiffres[i], startX, startY);
+    
+    // Appliquer des distorsions aléatoires sur les chiffres
+    contexte.save();
+    var degres = Math.random() * 30 - 10; // Rotation des chiffres
+    contexte.translate(startX + 25, startY + 20); // Déplacer le contexte au centre du chiffre
+    contexte.rotate(degres * Math.PI / 180); // Appliquer la rotation
+    contexte.fillText(chiffres[i], -25, -20); // Dessiner le chiffre centré
+    contexte.restore();
   }
 }
+
 
 
   function reset() {
