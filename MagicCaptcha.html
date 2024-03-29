@@ -31,7 +31,6 @@
   <div class="form-container">
     <label for="input">Entrez : </label><input id="input" type="text"/>
     <button id="bouton">Validez</button>
-    <p id="p2"></p>
   </div>
   <canvas id="timerCanvas" width="100" height="100"></canvas>
 </div>
@@ -49,7 +48,7 @@
     valeurAleatoire = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
     var chiffres = valeurAleatoire.toString().split('');
     contexte.clearRect(0, 0, canvas.width, canvas.height);
-    var colonneWidth = canvas.width / 4; // Largeur de chaque colonne
+    var colonneWidth = canvas.width / 4; // c'est la largeur de chaque colonne
     var rectHeight = 160;
     contexte.font = '40px serif';
 
@@ -59,35 +58,30 @@
         var colonneCenterX = colonneWidth * i + colonneWidth / 2;
         var colonneCenterY = rectHeight / 2;
         var maxSize = Math.min(colonneWidth, rectHeight);
-        var fontSize = maxSize * 0.8; // Pourcentage de la taille maximale que le chiffre peut avoir
+        var fontSize = maxSize * 0.7; // Pourcentage de la taille maximale que le chiffre peut avoir
         contexte.font = fontSize + 'px serif';
         var textWidth = contexte.measureText(chiffre).width;
-        var textHeight = fontSize; // Approximation de la hauteur du texte
+        var textHeight = fontSize;
 
-        // Appliquer des distorsions aléatoires sur les chiffres avec une rotation plus importante
+        // Appliquer des déformations sur les chiffres avec une rotation aussi
         contexte.save();
-        var degres = Math.random() * 60 - 30; // Rotation aléatoire jusqu'à 30 degrés dans les deux sens
-        contexte.translate(colonneCenterX, colonneCenterY); // Déplacer le contexte au centre du chiffre
+        var degres = Math.random() * 60 - 30; // Rotation aléatoire -> 30 degrés
+        contexte.translate(colonneCenterX, colonneCenterY);
         contexte.rotate(degres * Math.PI / 180); // Appliquer la rotation
 
-        // Déformation supplémentaire
-        var scaleX = Math.random() * 1.5 + 0.5; // Facteur d'échelle horizontal
-        var scaleY = Math.random() * 1.5 + 0.5; // Facteur d'échelle vertical
-        var skewX = Math.random() * 0.3 - 0.15; // Inclinaison horizontale
-        var skewY = Math.random() * 0.3 - 0.15; // Inclinaison verticale
+        // Déformation
+        var scaleX = Math.random() * 1.5 + 0.5;
+        var scaleY = Math.random() * 1.5 + 0.5; 
+        var skewX = Math.random() * 0.3 - 0.15; 
+        var skewY = Math.random() * 0.3 - 0.15; 
         contexte.transform(scaleX, skewX, skewY, scaleY, 0, 0); // Appliquer la transformation
 
         // Déplacer verticalement de manière aléatoire
-        var offsetY = Math.random() * 25 - 10; // Décalage vertical aléatoire jusqu'à 10 pixels dans les deux sens
+        var offsetY = Math.random() * 25 - 10; // Décalage vertical aléatoire -> 10 pixels 
         contexte.fillText(chiffre, -textWidth / 2, textHeight / 2 + offsetY);
         contexte.restore();
     }
 }
-
-
-
-
-
 
   function reset() {
     initialiserCaptcha();
@@ -114,13 +108,13 @@
   // Fonction pour dessiner le timer circulaire
   function dessinerTimer(ctx, tempsRestant) {
     var rayon = 40; // Rayon du cercle
-    var x = 50; // Coordonnée x du centre du cercle
-    var y = 50; // Coordonnée y du centre du cercle
-    var angle = 2 * Math.PI * (tempsRestant / 15); // Le temps total est de 15 secondes
+    var x = 50; // x = abcisse = position horizontale 
+    var y = 50; // y = ordonné = position verticale  
+    var angle = 2 * Math.PI * (tempsRestant / 15);
 
     ctx.clearRect(0, 0, timerCanvas.width, timerCanvas.height);
     ctx.beginPath();
-    ctx.arc(x, y, rayon, -0.5 * Math.PI, -0.5 * Math.PI + angle); // Dessine l'arc du timer
+    ctx.arc(x, y, rayon, -0.5 * Math.PI, -0.5 * Math.PI + angle); // Dessine l'arc du chrono
     ctx.lineWidth = 10;
     ctx.strokeStyle = '#FF0000';
     ctx.stroke();
