@@ -58,17 +58,20 @@
     // dessiner les chiffres dans chaque colonne
     for (var i = 0; i < chiffres.length; i++) {
         var chiffre = chiffres[i];
-        var colonneCenterX = colonneWidth * i + colonneWidth / 2;
-        var colonneCenterY = rectHeight / 2;
+        var colonneCenterX = colonneWidth * i + colonneWidth / 2; // x = pos horiontale
+        var colonneCenterY = rectHeight / 2; // y = pos verticale
         var maxSize = Math.min(colonneWidth, rectHeight);
         var fontSize = maxSize * 0.7; // Pourcentage de la taille maximale que le chiffre peut avoir
+        // couleur de texte aléatoire pour chaque chiffre
+        var couleurAleatoire = '#' + Math.floor(Math.random()*16777215).toString(16);
+        contexte.fillStyle = couleurAleatoire; // Utiliser la couleur aléatoire pour le texte
         contexte.font = fontSize + 'px serif';
         var textWidth = contexte.measureText(chiffre).width;
         var textHeight = fontSize;
 
         // appliquer des déformations sur les chiffres et faire une rotation 
         contexte.save();
-        var degres = Math.random() * 60 - 30; // Rotation aléatoire -> 30 degrés
+        var degres = Math.random() * 80 - 30; // Rotation aléatoire
         contexte.translate(colonneCenterX, colonneCenterY);
         contexte.rotate(degres * Math.PI / 180); // Appliquer la rotation
 
@@ -103,7 +106,7 @@
 // gère le compte à rebours du captcha 
 // et réinitialise le captcha une fois le temps imparti écoulé.
 function chrono() {
-    var tempsRestant = 9;
+    var tempsRestant = 10;
     var timerContexte = timerCanvas.getContext('2d');
     
     timer = setInterval(function() {
@@ -127,7 +130,7 @@ function chrono() {
     var rayon = 40; // Rayon du cercle du chrono
     var x = 50; // x = abcisse = position horizontale 
     var y = 50; // y = ordonné = position verticale  
-    var angle = 2 * Math.PI * (tempsRestant / 9);
+    var angle = 2 * Math.PI * (tempsRestant / 10);
 
     ctx.beginPath();
     ctx.arc(x, y, rayon, -0.5 * Math.PI, -0.5 * Math.PI + angle); // Dessine l'arc du chrono
