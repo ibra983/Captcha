@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Captcha</title>
   <style>
-    /* Styles CSS */
     .container {
       display: flex;
       flex-direction: column;
@@ -14,74 +13,94 @@
       margin-top: -100px;
       margin-left: -100px;
     }
+    #timerCanvas {
+      margin-top: 5px;
+      margin-left: 100px;
+    }
   </style>
 </head>
 
-<body onload="chrono()"> <!-- Appelle la fonction chrono() lors du chargement de la page -->
+<body>
 <div class="container">
   <h3>CAPTCHA</h3>
-  <canvas class="canvas" id="dessin" width="300" height="300"></canvas> <!-- Canvas pour dessiner le CAPTCHA -->
+  <canvas class="canvas" id="dessin" width="300" height="300"></canvas>
   <div class="form-container">
-    <label for="input">Valeur </label><input id="input" type="text"/> <!-- Champ de saisie -->
-    <button id="bouton">Vérifier</button> <!-- Bouton de vérification -->
-    <p id="p2"></p> <!-- Paragraphe pour afficher le résultat -->
+    <label for="input">Valeur </label><input id="input" type="text"/>
+    <button id="bouton">Vérifier</button>
+    <p id="p2"></p>
+    <canvas id="timerCanvas" width="100" height="100"></canvas>
   </div>
 </div>
 
 <script type="text/javascript">
-  var canvas = document.getElementById("dessin"); // Récupère l'élément canvas
-  var contexte = canvas.getContext("2d"); // Récupère le contexte de dessin 2D
-  var valeurAleatoire = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000); // Génère un nombre aléatoire entre 1000 et 9999
-  var valeurSaisie = document.getElementById('input'); // Récupère l'élément de saisie
-  var isOk = document.getElementById('p2'); // Récupère l'élément pour afficher le résultat
-  var compteur = 0; // Initialise un compteur
+  var canvas = document.getElementById("dessin");
+  var contexte = canvas.getContext("2d");
+  var valeurAleatoire;
+  var valeurSaisie = document.getElementById('input');
+  var isOk = document.getElementById('p2');
+  var timerCanvas = document.getElementById('timerCanvas');
+  var timer;
 
-  // Dessine les chiffres du nombre aléatoire séparément sur le canvas
-  var chiffres = valeurAleatoire.toString().split('');
-  contexte.strokeRect(10, 30, 50 * chiffres.length, 160); // Dessine un rectangle sur le canvas
-  contexte.font = '40px serif'; // Définit la police de caractères pour le texte
-  for (var i = 0; i < chiffres.length; i++) {
-    contexte.fillText(chiffres[i], 20 + (50 * i), 120); // Dessine chaque chiffre sur le canvas
+  function initialiserCaptcha() {
+    valeurAleatoire = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+    var chiffres = valeurAleatoire.toString().split('');
+    contexte.clearRect(0, 0, canvas.width, canvas.height);
+    contexte.strokeRect(10, 30, 50 * chiffres.length, 160);
+    contexte.font = '40px serif';
+    for (var i = 0; i < chiffres.length; i++) {
+      contexte.fillText(chiffres[i], 20 + (50 * i), 120);
+    }
   }
 
-  // Ajoute un écouteur d'événement au bouton de vérification
+  function reset() {
+    initialiserCaptcha();
+    isOk.innerHTML = "";
+    valeurSaisie.value = "";
+    clearInterval(timer);
+    chrono();
+  }
+
+  function chrono() {
+    var tempsRestant = 15;
+    var timerContexte = timerCanvas.getContext('2d');
+    timer = setInterval(function() {
+      if (tempsRestant >= 0) {
+        dessinerTimer(timerContexte, tempsRestant); // Appel de la fonction pour dessiner le timer
+        tempsRestant--;
+      } else {
+        clearInterval(timer);
+        reset();
+      }
+    }, 1000);
+  }
+
+  // Fonction pour dessiner le timer circulaire
+  function dessinerTimer(ctx, tempsRestant) {
+    var rayon = 40; // Rayon du cercle
+    var x = 50; // Coordonnée x du centre du cercle
+    var y = 50; // Coordonnée y du centre du cercle
+    var angle = 2 * Math.PI * (tempsRestant / 15); // Le temps total est de 15 secondes
+
+    ctx.clearRect(0, 0, timerCanvas.width, timerCanvas.height);
+    ctx.beginPath();
+    ctx.arc(x, y, rayon, -0.5 * Math.PI, -0.5 * Math.PI + angle); // Dessine l'arc du timer
+    ctx.lineWidth = 10;
+    ctx.strokeStyle = '#FF0000';
+    ctx.stroke();
+  }
+
   document.getElementById('bouton').addEventListener('click', function () {
-    if (valeurAleatoire === parseInt(valeurSaisie.value)) // Vérifie si la saisie correspond au CAPTCHA
-      isOk.innerHTML = "OK"; // Affiche "OK" si la saisie est correcte
+    if (valeurAleatoire === parseInt(valeurSaisie.value))
+      isOk.innerHTML = "NUMERO VALIDE";
     else {
-      isOk.innerHTML = "PAS OK"; // Affiche "PAS OK" si la saisie est incorrecte
+      isOk.innerHTML = "NUMERO NON VALIDE";
     }
   });
 
-  // Fonction pour réinitialiser le CAPTCHA
-  function reset() {
-    valeurAleatoire = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000); // Regénère un nombre aléatoire
-    resetCaptcha(); // Appelle la fonction pour réinitialiser le CAPTCHA
-    isOk.innerHTML = ""; // Efface le résultat précédent
-    valeurSaisie.value = ""; // Efface la saisie précédente
-    compteur = 0; // Réinitialise le compteur
-  }
-
-  // Fonction pour le chronomètre
-  function chrono() {
-    if (compteur < 15) // Vérifie si le compteur est inférieur à 15
-      compteur++; // Incrémente le compteur
-    else {
-      reset(); // Réinitialise le CAPTCHA lorsque le compteur atteint 15
-    }
-    setTimeout(chrono, 1000); // Appelle la fonction chrono() chaque seconde
-  }
-
-  // Fonction pour réinitialiser le CAPTCHA
-  function resetCaptcha() {
-    contexte.clearRect(0, 0, canvas.width, canvas.height); // Efface le contenu du canvas
-    var chiffresEspace = valeurAleatoire.toString().split('');
-    contexte.strokeRect(10, 30, 50 * chiffres.length, 160); // Dessine un rectangle sur le canvas
-    contexte.font = '40px serif'; // Définit la police de caractères pour le texte
-    for (var i = 0; i < chiffres.length; i++) {
-      contexte.fillText(chiffres[i], 20 + (50 * i), 120); // Dessine chaque chiffre sur le canvas
-    }
-  }
+  window.onload = function() {
+    initialiserCaptcha();
+    chrono();
+  };
 
 </script>
 
