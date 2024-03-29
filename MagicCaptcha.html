@@ -19,9 +19,6 @@
       margin-left: 20px;
       margin-top: 10px;
     }
-    #dessin {
-      border : solid 1px black;
-    }
   </style>
 </head>
 
@@ -29,11 +26,11 @@
 <div class="container">
   <h3>CAPTCHA</h3>
   <div class="captcha-container">
-    <canvas class="canvas" id="dessin" width="180" height="160"></canvas>
+    <canvas class="canvas" id="dessin" width="300" height="160"></canvas>
   </div>
   <div class="form-container">
-    <label for="input">Valeur </label><input id="input" type="text"/>
-    <button id="bouton">Vérifier</button>
+    <label for="input">Entrez : </label><input id="input" type="text"/>
+    <button id="bouton">Validez</button>
     <p id="p2"></p>
   </div>
   <canvas id="timerCanvas" width="100" height="100"></canvas>
@@ -49,32 +46,46 @@
   var timer;
 
   function initialiserCaptcha() {
-  valeurAleatoire = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
-  var chiffres = valeurAleatoire.toString().split('');
-  contexte.clearRect(0, 0, canvas.width, canvas.height);
-  var colonneWidth = canvas.width / 4; // Largeur de chaque colonne
-  var rectHeight = 160;
-  contexte.font = '40px serif';
+    valeurAleatoire = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+    var chiffres = valeurAleatoire.toString().split('');
+    contexte.clearRect(0, 0, canvas.width, canvas.height);
+    var colonneWidth = canvas.width / 4; // Largeur de chaque colonne
+    var rectHeight = 160;
+    contexte.font = '40px serif';
 
-  // Dessiner les chiffres dans chaque colonne
-  for (var i = 0; i < chiffres.length; i++) {
-    var startX = colonneWidth * i + (colonneWidth - 50) / 2 + 10; // Position horizontale du chiffre dans la colonne avec un décalage de 10 pixels
-    var startY = Math.random() * (rectHeight - 40); // Position verticale aléatoire à l'intérieur du rectangle
-    var offsetX = Math.random() * 20 - 10; // Décalage horizontal aléatoire jusqu'à 10 pixels dans les deux sens
-    var offsetY = Math.random() * 20 - 10; // Décalage vertical aléatoire jusqu'à 10 pixels dans les deux sens
-    startX += offsetX;
-    startY += offsetY;
-    startY = Math.min(startY + 50, rectHeight - 50); // Limiter la position verticale pour rester dans le canvas
-    
-    // Appliquer des distorsions aléatoires sur les chiffres
-    contexte.save();
-    var degres = Math.random() * 30 - 10; // Rotation des chiffres
-    contexte.translate(startX + 25, startY + 20); // Déplacer le contexte au centre du chiffre
-    contexte.rotate(degres * Math.PI / 180); // Appliquer la rotation
-    contexte.fillText(chiffres[i], -25, -20); // Dessiner le chiffre centré
-    contexte.restore();
-  }
+    // Dessiner les chiffres dans chaque colonne
+    for (var i = 0; i < chiffres.length; i++) {
+        var chiffre = chiffres[i];
+        var colonneCenterX = colonneWidth * i + colonneWidth / 2;
+        var colonneCenterY = rectHeight / 2;
+        var maxSize = Math.min(colonneWidth, rectHeight);
+        var fontSize = maxSize * 0.8; // Pourcentage de la taille maximale que le chiffre peut avoir
+        contexte.font = fontSize + 'px serif';
+        var textWidth = contexte.measureText(chiffre).width;
+        var textHeight = fontSize; // Approximation de la hauteur du texte
+
+        // Appliquer des distorsions aléatoires sur les chiffres avec une rotation plus importante
+        contexte.save();
+        var degres = Math.random() * 60 - 30; // Rotation aléatoire jusqu'à 30 degrés dans les deux sens
+        contexte.translate(colonneCenterX, colonneCenterY); // Déplacer le contexte au centre du chiffre
+        contexte.rotate(degres * Math.PI / 180); // Appliquer la rotation
+
+        // Déformation supplémentaire
+        var scaleX = Math.random() * 1.5 + 0.5; // Facteur d'échelle horizontal
+        var scaleY = Math.random() * 1.5 + 0.5; // Facteur d'échelle vertical
+        var skewX = Math.random() * 0.3 - 0.15; // Inclinaison horizontale
+        var skewY = Math.random() * 0.3 - 0.15; // Inclinaison verticale
+        contexte.transform(scaleX, skewX, skewY, scaleY, 0, 0); // Appliquer la transformation
+
+        // Déplacer verticalement de manière aléatoire
+        var offsetY = Math.random() * 25 - 10; // Décalage vertical aléatoire jusqu'à 10 pixels dans les deux sens
+        contexte.fillText(chiffre, -textWidth / 2, textHeight / 2 + offsetY);
+        contexte.restore();
+    }
 }
+
+
+
 
 
 
@@ -117,9 +128,9 @@
 
   document.getElementById('bouton').addEventListener('click', function () {
     if (valeurAleatoire === parseInt(valeurSaisie.value))
-      isOk.innerHTML = "NUMERO VALIDE";
+      isOk.innerHTML = "Numéro Valide";
     else {
-      isOk.innerHTML = "NUMERO NON VALIDE";
+      isOk.innerHTML = "Veuillez réessayer";
     }
   });
 
