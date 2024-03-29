@@ -9,13 +9,18 @@
       flex-direction: column;
       align-items: center;
     }
+    .captcha-container {
+      margin-bottom: 10px;
+    }
     .form-container {
-      margin-top: -100px;
-      margin-left: -100px;
+      margin-left: 20px;
     }
     #timerCanvas {
-      margin-top: 5px;
-      margin-left: 100px;
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+    #dessin {
+      border : solid 1px black;
     }
   </style>
 </head>
@@ -23,13 +28,15 @@
 <body>
 <div class="container">
   <h3>CAPTCHA</h3>
-  <canvas class="canvas" id="dessin" width="300" height="300"></canvas>
+  <div class="captcha-container">
+    <canvas class="canvas" id="dessin" width="180" height="160"></canvas>
+  </div>
   <div class="form-container">
     <label for="input">Valeur </label><input id="input" type="text"/>
     <button id="bouton">Vérifier</button>
     <p id="p2"></p>
-    <canvas id="timerCanvas" width="100" height="100"></canvas>
   </div>
+  <canvas id="timerCanvas" width="100" height="100"></canvas>
 </div>
 
 <script type="text/javascript">
@@ -45,10 +52,16 @@
     valeurAleatoire = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
     var chiffres = valeurAleatoire.toString().split('');
     contexte.clearRect(0, 0, canvas.width, canvas.height);
-    contexte.strokeRect(10, 30, 50 * chiffres.length, 160);
+    var colonneWidth = canvas.width / 4; // Largeur de chaque colonne
+    var rectHeight = 160;
     contexte.font = '40px serif';
+
+    // Dessiner les chiffres dans chaque colonne
     for (var i = 0; i < chiffres.length; i++) {
-      contexte.fillText(chiffres[i], 20 + (50 * i), 120);
+      var startX = colonneWidth * i + (colonneWidth - 50) / 2 + 10; // Position horizontale du chiffre dans la colonne avec un décalage de 10 pixels
+      var startY = Math.random() * (rectHeight - 40); // Position verticale aléatoire à l'intérieur du rectangle
+      startY = Math.min(startY + 50, rectHeight - 50); // Limiter la position verticale pour rester dans le canvas
+      contexte.fillText(chiffres[i], startX, startY);
     }
   }
 
