@@ -14,6 +14,7 @@
     }
     .form-container {
       margin-left: 20px;
+      position : relative;
     }
     #timerCanvas {
       margin-left: 20px;
@@ -31,6 +32,7 @@
   <div class="form-container">
     <label for="input">Entrez : </label><input id="input" type="text"/>
     <button id="bouton">Validez</button>
+    <p id="p2"></p>
   </div>
   <canvas id="timerCanvas" width="100" height="100"></canvas>
 </div>
@@ -81,38 +83,46 @@
         contexte.fillText(chiffre, -textWidth / 2, textHeight / 2 + offsetY);
         contexte.restore();
     }
-}
+    chrono();
+  }
 
   function reset() {
     initialiserCaptcha();
     isOk.innerHTML = "";
     valeurSaisie.value = "";
     clearInterval(timer);
-    chrono();
-  }
 
-  function chrono() {
-    var tempsRestant = 15;
+    // Effacer le contenu du canvas du chrono
     var timerContexte = timerCanvas.getContext('2d');
+    timerContexte.clearRect(0, 0, timerCanvas.width, timerCanvas.height);
+}
+
+function chrono() {
+    var tempsRestant = 10;
+    var timerContexte = timerCanvas.getContext('2d');
+    
     timer = setInterval(function() {
-      if (tempsRestant >= 0) {
-        dessinerTimer(timerContexte, tempsRestant); // Appel de la fonction pour dessiner le timer
+        timerContexte.clearRect(0, 0, timerCanvas.width, timerCanvas.height);
+        dessinerTimer(timerContexte, tempsRestant);
         tempsRestant--;
-      } else {
-        clearInterval(timer);
-        reset();
-      }
+
+        if (tempsRestant < 0) {
+            clearInterval(timer);
+            reset();
+            initialiserCaptcha(); // Redémarrer le captcha seulement une fois toutes les 10 secondes
+        }
     }, 1000);
-  }
+}
+
+  
 
   // Fonction pour dessiner le timer circulaire
   function dessinerTimer(ctx, tempsRestant) {
     var rayon = 40; // Rayon du cercle
     var x = 50; // x = abcisse = position horizontale 
     var y = 50; // y = ordonné = position verticale  
-    var angle = 2 * Math.PI * (tempsRestant / 15);
+    var angle = 2 * Math.PI * (tempsRestant / 10);
 
-    ctx.clearRect(0, 0, timerCanvas.width, timerCanvas.height);
     ctx.beginPath();
     ctx.arc(x, y, rayon, -0.5 * Math.PI, -0.5 * Math.PI + angle); // Dessine l'arc du chrono
     ctx.lineWidth = 10;
@@ -130,7 +140,6 @@
 
   window.onload = function() {
     initialiserCaptcha();
-    chrono();
   };
 
 </script>
